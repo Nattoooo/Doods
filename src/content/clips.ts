@@ -20,6 +20,8 @@ export interface ClipDef {
   readonly events: Readonly<Record<number, string>>;
   readonly pivotX: number;
   readonly pivotY: number;
+  readonly anchorX: number;
+  readonly anchorY: number;
   readonly placeholder?: PlaceholderPainter;
   readonly placeholderOnly: boolean;
 }
@@ -29,6 +31,7 @@ export interface ClipOptions {
   durations?: number | readonly number[];
   events?: Record<number, string>;
   pivot?: readonly [number, number];
+  anchor?: readonly [number, number];
   placeholder?: PlaceholderPainter;
   placeholderOnly?: boolean;
 }
@@ -74,6 +77,8 @@ export function defineClip(
     events: options.events ?? {},
     pivotX: options.pivot?.[0] ?? frameW / 2,
     pivotY: options.pivot?.[1] ?? frameH,
+    anchorX: options.anchor?.[0] ?? options.pivot?.[0] ?? frameW / 2,
+    anchorY: options.anchor?.[1] ?? (options.pivot?.[1] ?? frameH) - 10,
     placeholder: options.placeholder,
     placeholderOnly: options.placeholderOnly ?? false,
   };

@@ -1,5 +1,5 @@
 import { defineClip } from './clips';
-import { burstPainter } from '../render/placeholder';
+import { arcPainter, burstPainter, ringPainter } from '../render/placeholder';
 
 export const FX_CLIPS = {
   stepDust: defineClip('fx_dust_step', 'Fx/dust_step.png', 16, 16, 5, {
@@ -29,5 +29,27 @@ export const FX_CLIPS = {
     pivot: [0, 16],
     placeholder: burstPainter(6, 13, true),
     placeholderOnly: true,
+  }),
+  hit: defineClip('fx_hit', 'Fx/hit.png', 24, 24, 5, {
+    pivot: [12, 12],
+    placeholder: burstPainter(8, 10),
+  }),
+  slash: defineClip('fx_slash', 'Fx/slash.png', 40, 32, 5, {
+    pivot: [0, 16],
+    anchor: [0, 16],
+    placeholder: arcPainter(26),
+  }),
+  smoke: defineClip('fx_smoke', 'Fx/smoke.png', 32, 32, 6, {
+    pivot: [16, 16],
+    placeholder: burstPainter(5, 11),
+  }),
+  flashBomb: defineClip('fx_flashbomb', 'Fx/flashbomb.png', 64, 64, 7, {
+    pivot: [32, 32],
+    placeholder: burstPainter(10, 28),
+  }),
+  aura: defineClip('fx_aura', 'Fx/aura.png', 32, 32, 8, {
+    pivot: [16, 16],
+    loop: true,
+    placeholder: ringPainter(13),
   }),
 };
