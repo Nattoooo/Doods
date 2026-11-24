@@ -29,7 +29,7 @@ export interface MovementTuning {
 export const DEFAULT_MOVEMENT: MovementTuning = {
   bodyW: 8,
   bodyH: 20,
-  runSpeed: 150,
+  runSpeed: 195,
   groundAccel: 2400,
   groundDecel: 3000,
   airAccel: 1800,
