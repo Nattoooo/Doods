@@ -74,7 +74,7 @@ export function stickPainter(fn: PoseFn): PlaceholderPainter {
   };
 }
 
-export function burstPainter(count: number, reach: number): PlaceholderPainter {
+export function burstPainter(count: number, reach: number, vertical = false): PlaceholderPainter {
   return (ctx, frame, frames, def) => {
     const t = frames > 1 ? frame / (frames - 1) : 0;
     ctx.fillStyle = '#fff';
@@ -82,12 +82,11 @@ export function burstPainter(count: number, reach: number): PlaceholderPainter {
     for (let i = 0; i < count; i++) {
       const a = (i / count) * Math.PI * 2;
       const r = reach * (0.25 + t * 0.75);
-      ctx.fillRect(
-        Math.round(def.pivotX + Math.cos(a) * r - size / 2),
-        Math.round(def.pivotY - 2 + Math.sin(a) * r * 0.5 - size / 2),
-        size,
-        size,
-      );
+      const along = Math.cos(a) * r;
+      const out = Math.sin(a) * r * 0.5;
+      const x = vertical ? def.pivotX + 2 + out : def.pivotX + along;
+      const y = vertical ? def.pivotY + along : def.pivotY - 2 + out;
+      ctx.fillRect(Math.round(x - size / 2), Math.round(y - size / 2), size, size);
     }
   };
 }

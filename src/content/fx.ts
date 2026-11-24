@@ -25,4 +25,9 @@ export const FX_CLIPS = {
     placeholder: burstPainter(8, 11),
     placeholderOnly: true,
   }),
+  wallPuff: defineClip('fx_wall_puff', 'Fx/wall_puff.png', 12, 32, 6, {
+    pivot: [0, 16],
+    placeholder: burstPainter(6, 13, true),
+    placeholderOnly: true,
+  }),
 };

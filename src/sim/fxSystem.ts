@@ -55,7 +55,7 @@ export class FxSystem {
         this.spawn(FX_CLIPS.airPuff, e.x, e.y, false, e.tint);
         break;
       case SimEvent.WallKick:
-        this.spawn(FX_CLIPS.wallSpark, e.x - e.dir * 4, e.y, e.dir < 0, e.tint);
+        this.spawn(FX_CLIPS.wallPuff, e.x - e.dir * 4, e.y, e.dir < 0, e.tint);
         break;
     }
   }
