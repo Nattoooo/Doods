@@ -4,7 +4,8 @@ export const SimEvent = {
   WallKick: 'wallKick',
   Land: 'land',
   Step: 'step',
-  Teleport: 'teleport',
+  Dodge: 'dodge',
+  DodgeTrail: 'dodgeTrail',
 } as const;
 
 export interface SimEventData {
@@ -15,6 +16,6 @@ export interface SimEventData {
   dir: number;
   power: number;
   tint: number;
-  toX?: number;
-  toY?: number;
+  angle?: number;
+  index?: number;
 }

@@ -240,6 +240,66 @@ export class Renderer {
     this.quads++;
   }
 
+  blitRotated(
+    tex: Texture,
+    sx: number,
+    sy: number,
+    sw: number,
+    sh: number,
+    cx: number,
+    cy: number,
+    anchorX: number,
+    anchorY: number,
+    angle: number,
+    color = 0xffffff,
+    alpha = 1,
+    flipX = false,
+  ): void {
+    if (this.current !== tex) {
+      this.flush();
+      this.current = tex;
+    }
+    if (this.quads >= MAX_QUADS) this.flush();
+
+    let u0 = sx / tex.width;
+    let u1 = (sx + sw) / tex.width;
+    const v0 = sy / tex.height;
+    const v1 = (sy + sh) / tex.height;
+    const l0 = flipX ? -(sw - anchorX) : -anchorX;
+    const l1 = flipX ? anchorX : sw - anchorX;
+    if (flipX) {
+      const t = u0;
+      u0 = u1;
+      u1 = t;
+    }
+    const t0 = -anchorY;
+    const t1 = sh - anchorY;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const ox = Math.round(cx);
+    const oy = Math.round(cy);
+    const r = ((color >> 16) & 255) / 255;
+    const g = ((color >> 8) & 255) / 255;
+    const b = (color & 255) / 255;
+    const d = this.data;
+    let o = this.quads * 4 * FLOATS_PER_VERTEX;
+    const put = (lx: number, ly: number, u: number, v: number) => {
+      d[o++] = ox + lx * cos - ly * sin;
+      d[o++] = oy + lx * sin + ly * cos;
+      d[o++] = u;
+      d[o++] = v;
+      d[o++] = r;
+      d[o++] = g;
+      d[o++] = b;
+      d[o++] = alpha;
+    };
+    put(l0, t0, u0, v0);
+    put(l1, t0, u1, v0);
+    put(l0, t1, u0, v1);
+    put(l1, t1, u1, v1);
+    this.quads++;
+  }
+
   rect(x: number, y: number, w: number, h: number, color: number, alpha = 1): void {
     this.blit(this.white, 0, 0, 1, 1, x, y, w, h, color, alpha);
   }

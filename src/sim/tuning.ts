@@ -24,10 +24,11 @@ export interface MovementTuning {
   refillAirJumpsOnWallKick: boolean;
   runAnimThreshold: number;
   riseThreshold: number;
-  teleportDistance: number;
-  teleportMinDistance: number;
-  teleportCooldown: number;
-  teleportKeepsVelocity: boolean;
+  dodgeSpeed: number;
+  dodgeDuration: number;
+  dodgeCooldown: number;
+  dodgeExitFactor: number;
+  dodgeTrailTicks: number;
 }
 
 export const DEFAULT_MOVEMENT: MovementTuning = {
@@ -56,10 +57,11 @@ export const DEFAULT_MOVEMENT: MovementTuning = {
   refillAirJumpsOnWallKick: true,
   runAnimThreshold: 20,
   riseThreshold: 80,
-  teleportDistance: 72,
-  teleportMinDistance: 4,
-  teleportCooldown: 2.5,
-  teleportKeepsVelocity: true,
+  dodgeSpeed: 960,
+  dodgeDuration: 0.09,
+  dodgeCooldown: 2.5,
+  dodgeExitFactor: 0.25,
+  dodgeTrailTicks: 2,
 };
 
 export function jumpSpeed(gravity: number, height: number): number {

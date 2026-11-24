@@ -91,29 +91,6 @@ export function burstPainter(count: number, reach: number, vertical = false): Pl
   };
 }
 
-export function ringPainter(inward: boolean, rays: boolean): PlaceholderPainter {
-  return (ctx, frame, frames, def) => {
-    const t = frames > 1 ? frame / (frames - 1) : 0;
-    const u = inward ? 1 - t : t;
-    const r = 2 + 12 * u;
-    ctx.fillStyle = '#fff';
-    const segments = 32;
-    for (let i = 0; i < segments; i++) {
-      if (i % 4 === 3) continue;
-      const a = (i / segments) * Math.PI * 2;
-      ctx.fillRect(Math.round(def.pivotX + Math.cos(a) * r), Math.round(def.pivotY + Math.sin(a) * r), 1, 1);
-    }
-    const core = Math.max(1, Math.round(4 * (inward ? 1 - t : 1 - t * 0.5)));
-    ctx.fillRect(def.pivotX - core / 2, def.pivotY - core / 2, core, core);
-    if (!rays) return;
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2;
-      const r0 = 6 + 6 * t;
-      ctx.fillRect(Math.round(def.pivotX + Math.cos(a) * r0 - 1), Math.round(def.pivotY + Math.sin(a) * r0 - 1), 2, 2);
-    }
-  };
-}
-
 export const boxPainter: PlaceholderPainter = (ctx, _frame, _frames, def) => {
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, def.frameW, 1);

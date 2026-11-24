@@ -1,5 +1,6 @@
 import { ARENA_COLS, ARENA_ROWS, HUD_HEIGHT, TILE, VIEW_H, VIEW_W } from '../config';
 import { CHAR_CLIPS } from '../content/character';
+import type { ClipDef } from '../content/clips';
 import type { Controller } from '../core/controller';
 import type { LoopStats } from '../core/loop';
 import type { AssetStore } from '../render/assets';
@@ -15,7 +16,7 @@ import { drawHud } from './hud';
 const PLAYER_COLOR = 0x5ad1ff;
 const BORDER = 3;
 const GRID = 16;
-const HINT = 'A/D MOVE  W/SPACE JUMP  M2 TELEPORT  R RESET';
+const HINT = 'A/D MOVE  W/SPACE JUMP  M2 DODGE  R RESET';
 
 export class Game {
   readonly world: World;
@@ -119,9 +120,20 @@ export class Game {
     for (const fx of this.fx.instances) {
       this.assets.drawFrame(this.renderer, fx.clip, fx.animator.frame, fx.x, fx.y, fx.tint, 1, fx.flip);
     }
-    for (const g of this.fx.ghosts) {
-      this.assets.drawFrame(this.renderer, g.clip, g.frame, g.x, g.y, g.tint, g.alpha, g.flip);
-    }
+    for (const g of this.fx.ghosts) this.drawBodyRotated(g.clip, g.frame, g.x, g.y, g.angle, g.flip, g.tint, g.alpha);
+  }
+
+  private drawBodyRotated(
+    clip: ClipDef,
+    frame: number,
+    cx: number,
+    cy: number,
+    angle: number,
+    flip: boolean,
+    tint: number,
+    alpha: number,
+  ): void {
+    this.assets.drawFrameRotated(this.renderer, clip, frame, cx, cy, clip.pivotX, clip.pivotY - 10, angle, tint, alpha, flip);
   }
 
   private drawCrosshair(): void {
@@ -139,6 +151,11 @@ export class Game {
     for (const f of this.world.fighters) {
       const clip = f.animator.clip;
       if (!clip) continue;
+      if (f.dodging) {
+        const b = f.body;
+        this.drawBodyRotated(clip, f.animator.frame, b.x, b.y - b.h / 2, f.dodgeAim.angle, f.dodgeAim.flip, f.tint, 1);
+        continue;
+      }
       this.assets.drawFrame(this.renderer, clip, f.animator.frame, f.body.x, f.body.y, f.tint, 1, f.move.facing < 0);
     }
   }

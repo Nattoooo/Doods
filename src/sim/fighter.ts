@@ -3,12 +3,13 @@ import type { Controller } from '../core/controller';
 import { SIM_DT } from '../config';
 import { Action, isPressed } from '../core/input';
 import { Animator } from './animator';
-import { createBody } from './body';
+import { createBody, moveX, moveY } from './body';
 import type { Body } from './body';
 import { SimEvent } from './events';
 import { createMovementFlags, createMovementState, senseContacts, stepMovement } from './movement';
 import type { MovementFlags, MovementState } from './movement';
-import { planTeleport } from './teleport';
+import { aimDodge } from './dodge';
+import type { DodgeAim } from './dodge';
 import { DEFAULT_MOVEMENT } from './tuning';
 import type { MovementTuning } from './tuning';
 import type { World } from './world';
@@ -39,10 +40,13 @@ export class Fighter {
   tint: number;
   health: number;
   maxHealth: number;
-  teleportCooldown = 0;
+  dodgeCooldown = 0;
+  dodgeTime = 0;
+  dodgeAim: DodgeAim = { dirX: 1, dirY: 0, angle: 0, flip: false };
   aimX = 0;
   aimY = 0;
 
+  private dodgeTicks = 0;
   private spawnX: number;
   private spawnY: number;
   private world: World | null = null;
@@ -79,7 +83,8 @@ export class Fighter {
     this.move.kickLock = 0;
     this.move.jumpBuffer = 0;
     this.move.facing = 1;
-    this.teleportCooldown = 0;
+    this.dodgeCooldown = 0;
+    this.dodgeTime = 0;
     this.animator.play(this.clips.idle, true);
     if (this.world) senseContacts(this.world.arena, this.body, this.move, this.tuning);
   }
@@ -88,44 +93,88 @@ export class Fighter {
     const input = this.controller.read(this, world);
     this.aimX = input.aimX;
     this.aimY = input.aimY;
-    this.teleportCooldown = Math.max(0, this.teleportCooldown - SIM_DT);
-    if (isPressed(input, Action.Teleport) && this.teleportCooldown === 0) this.tryTeleport(world);
+    this.dodgeCooldown = Math.max(0, this.dodgeCooldown - SIM_DT);
+    if (isPressed(input, Action.Dodge) && this.dodgeCooldown === 0 && !this.dodging) this.startDodge(world);
+    if (this.dodging) {
+      this.stepDodge(world);
+      this.animator.play(this.clips.run);
+      this.animator.step();
+      return;
+    }
     stepMovement(world.arena, this.body, this.move, this.tuning, input, this.flags);
     this.emitMovementEvents(world);
     this.driveAnimation();
     this.animator.step();
   }
 
-  get teleportReady(): number {
-    return 1 - this.teleportCooldown / this.tuning.teleportCooldown;
+  get dodging(): boolean {
+    return this.dodgeTime > 0;
   }
 
-  private tryTeleport(world: World): void {
+  get invulnerable(): boolean {
+    return this.dodging;
+  }
+
+  get dodgeReady(): number {
+    return 1 - this.dodgeCooldown / this.tuning.dodgeCooldown;
+  }
+
+  private startDodge(world: World): void {
     const b = this.body;
-    const plan = planTeleport(world.arena, b, this.aimX, this.aimY, this.move.facing, this.tuning);
-    if (!plan) return;
-    const fromX = b.x;
-    const fromY = b.y - b.h / 2;
-    b.x = plan.x;
-    b.y = plan.y;
-    if (!this.tuning.teleportKeepsVelocity) {
-      b.vx = 0;
-      b.vy = 0;
-    }
-    if (Math.abs(plan.dirX) > 0.2) this.move.facing = plan.dirX > 0 ? 1 : -1;
-    this.teleportCooldown = this.tuning.teleportCooldown;
-    senseContacts(world.arena, b, this.move, this.tuning);
+    this.dodgeAim = aimDodge(b, this.aimX, this.aimY, this.move.facing);
+    this.dodgeTime = this.tuning.dodgeDuration;
+    this.dodgeCooldown = this.tuning.dodgeCooldown;
+    this.dodgeTicks = 0;
+    this.move.facing = this.dodgeAim.flip ? -1 : 1;
+    this.move.kickLock = 0;
+    this.move.jumpBuffer = 0;
+    this.move.sliding = false;
     world.emit({
-      type: SimEvent.Teleport,
+      type: SimEvent.Dodge,
       fighterId: this.id,
-      x: fromX,
-      y: fromY,
+      x: b.x,
+      y: b.y - b.h / 2,
       dir: this.move.facing,
-      power: plan.distance,
+      power: this.tuning.dodgeSpeed,
       tint: this.tint,
-      toX: b.x,
-      toY: b.y - b.h / 2,
+      angle: this.dodgeAim.angle,
     });
+  }
+
+  private stepDodge(world: World): void {
+    const b = this.body;
+    const t = this.tuning;
+    const aim = this.dodgeAim;
+    const px = b.x;
+    const py = b.y;
+    b.vx = aim.dirX * t.dodgeSpeed;
+    b.vy = aim.dirY * t.dodgeSpeed;
+    moveX(world.arena, b, b.vx * SIM_DT);
+    moveY(world.arena, b, b.vy * SIM_DT);
+    senseContacts(world.arena, b, this.move, t);
+
+    if (this.dodgeTicks % t.dodgeTrailTicks === 0) {
+      world.emit({
+        type: SimEvent.DodgeTrail,
+        fighterId: this.id,
+        x: b.x,
+        y: b.y - b.h / 2,
+        dir: this.move.facing,
+        power: 0,
+        tint: this.tint,
+        angle: aim.angle,
+        index: this.dodgeTicks / t.dodgeTrailTicks,
+      });
+    }
+    this.dodgeTicks++;
+
+    this.dodgeTime -= SIM_DT;
+    const moved = Math.hypot(b.x - px, b.y - py);
+    if (this.dodgeTime <= 0 || moved < t.dodgeSpeed * SIM_DT * 0.25) {
+      this.dodgeTime = 0;
+      b.vx = aim.dirX * t.dodgeSpeed * t.dodgeExitFactor;
+      b.vy = aim.dirY * t.dodgeSpeed * t.dodgeExitFactor;
+    }
   }
 
   private emitMovementEvents(world: World): void {
@@ -138,7 +187,7 @@ export class Fighter {
   }
 
   private onAnimEvent(name: string): void {
-    if (!this.world || name !== SimEvent.Step) return;
+    if (!this.world || this.dodging || name !== SimEvent.Step) return;
     const b = this.body;
     this.world.emit({ type: SimEvent.Step, fighterId: this.id, x: b.x, y: b.y, dir: this.move.facing, power: Math.abs(b.vx), tint: this.tint });
   }

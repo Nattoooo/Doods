@@ -6,7 +6,7 @@ export const Action = {
   Up: 4,
   Down: 8,
   Jump: 16,
-  Teleport: 32,
+  Dodge: 32,
 } as const;
 
 export interface InputState {
@@ -43,7 +43,7 @@ export const DEFAULT_KEY_BINDINGS: Record<string, number> = {
 };
 
 export const DEFAULT_MOUSE_BINDINGS: Record<number, number> = {
-  2: Action.Teleport,
+  2: Action.Dodge,
 };
 
 const PAD_DEADZONE = 0.35;

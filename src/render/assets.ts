@@ -113,4 +113,36 @@ export class AssetStore {
       flipX,
     );
   }
+
+  drawFrameRotated(
+    renderer: Renderer,
+    def: ClipDef,
+    frame: number,
+    cx: number,
+    cy: number,
+    anchorX: number,
+    anchorY: number,
+    angle: number,
+    color: number,
+    alpha = 1,
+    flipX = false,
+  ): void {
+    const sheet = this.get(def);
+    const f = Math.min(Math.max(0, frame), sheet.frames - 1);
+    renderer.blitRotated(
+      sheet.tex,
+      f * def.frameW,
+      0,
+      def.frameW,
+      def.frameH,
+      cx,
+      cy,
+      anchorX,
+      anchorY,
+      angle,
+      color,
+      alpha,
+      flipX,
+    );
+  }
 }
