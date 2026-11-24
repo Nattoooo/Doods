@@ -1,0 +1,85 @@
+BILL 005 - NINJA ANIMATIONS
+
+RULES FOR EVERY ANIMATION
+- Same rules as Bill 002: ONE horizontal strip per animation, equal frames left to right, no padding. The frame counts are exact because the game reads them.
+- 24 FPS, one tick per frame unless it says HOLD.
+- Smooth, clean, slightly exaggerated motion. Use squash and stretch, and 1px-gap-separated blur streaks in the same white.
+- Build everything on the ninja_base design from Bill 004. The headband tails and the scabbard follow every motion with a 1-2 frame delay, streaming backward when moving, flicking up on jumps and drooping on falls.
+
+--------------------------------------------------
+MOVEMENT SET (10 animations, 24x24 frames, pivot bottom center (12,24))
+Files: Sprites/Ninja/idle.png (16 frames, loops), run.png (8, loops), jump_start.png (3), rise.png (3, HOLD last frame), apex.png (4, HOLD last frame), fall.png (4, loops), land.png (5), double_jump.png (8), wall_slide.png (4, loops), wall_kick.png (5).
+Description: Each one has exactly the same poses, frame count, timing, footfall frames and wall side as the Bill 002 animation of the same name. The only differences are the Ninja additions above. The run's footfall frames are still frames 1 and 5.
+
+--------------------------------------------------
+ANIMATION: ninja_chop
+File: Sprites/Ninja/chop.png
+Frames: 6 at 40x24 (240x24). Plays once.
+Pivot: center (x=20, y=12), the body center. The game rotates this animation to the dash direction, so the body must stay centered on that point.
+Description: A forward dash with a katana slash. The blade is a 1px-gap-separated straight line, 14px long, in the hand.
+- Frame 1: windup. Crouched, leaning back, the blade held behind the head.
+- Frame 2: the lunge. The body stretches horizontally, and the blade sweeps forward at shoulder height.
+- Frame 3: the peak. The arm is fully extended with the blade horizontal and the tip at x=38. The headband tails stream straight back.
+- Frames 4-5: follow-through. The blade drops to a low angle, the body straightens, and 6-8px speed streaks trail behind the feet.
+- Frame 6: recovery, with the blade lowered.
+
+ANIMATION: ninja_throw
+File: Sprites/Ninja/throw.png
+Frames: 5 at 32x24 (160x24). Plays once.
+Pivot: bottom center (x=16, y=24)
+Description: A throw. The legs stay in a neutral stance because the game plays this over movement.
+- Frame 1: windup. The throwing arm is back, and the torso twists.
+- Frame 2: the release. The arm whips forward, fully extended at shoulder height with the hand open.
+- Frame 3: follow-through, the arm sweeping down and forward.
+- Frames 4-5: recover to the base pose.
+
+ANIMATION: ninja_stab
+File: Sprites/Ninja/stab.png
+Frames: 4 at 40x24 (160x24). Loops seamlessly.
+Pivot: center (x=20, y=12). The game rotates it to the dash direction.
+Description: Flying horizontally, stabbing forward. The body is stretched out flat, the legs trail straight back, and both hands hold the katana extended forward with the tip at x=38. The headband tails stream straight back and flutter between frames. Three 5-8px speed streaks behind the body shift each frame.
+
+ANIMATION: ninja_heli
+File: Sprites/Ninja/heli.png
+Frames: 6 at 48x48 (288x48). Loops seamlessly.
+Pivot: center (x=24, y=24), the body center.
+Description: The Helichopter. The ninja hangs upright with the legs tucked and the arms straight up, holding the katana overhead. The katana spins flat like a helicopter rotor seen from the side. It is a 2px line through (x=24, y=11), 44px long on frames 1 and 4, 24px on frames 2 and 5, and 10px on frames 3 and 6, as it turns toward and away from the viewer. Two curved blur arcs, 1px thick with 1px gaps, trail the tips. The tails whip around in a circle below the blade.
+
+ANIMATION: ninja_hurt
+File: Sprites/Ninja/hurt.png
+Frames: 3 at 24x24 (72x24). Plays once.
+Pivot: bottom center (x=12, y=24)
+Description: A hit reaction. Frame 1: snapped back, the head thrown back and the arms flung out. Frame 2: the maximum lean. Frame 3: recovering to near base pose.
+
+ANIMATION: ninja_shuriken
+File: Sprites/Ninja/shuriken.png
+Frames: 4 at 8x8 (32x8). Loops.
+Pivot: center (x=4, y=4)
+Description: The star spins, rotating 22.5 degrees per frame. Frame 1 is the ninja_shuriken sprite as drawn. Every frame keeps the 2x2 hole in the center.
+
+--------------------------------------------------
+FX ANIMATIONS
+ANIMATION: fx_slash
+File: Sprites/Fx/slash.png
+Frames: 5 at 40x32 (200x32). Plays once. Pivot: left center (x=0, y=16).
+Description: Frame 1: a thin 1px arc, 16px long. Frame 2: the arc grows to 30px and 2px thick. Frame 3: the full crescent as in the fx_slash sprite, 3px thick, at its peak. Frame 4: it thins to 1px and breaks into segments with 1px gaps. Frame 5: three stray 2px dashes.
+
+ANIMATION: fx_hit
+File: Sprites/Fx/hit.png
+Frames: 5 at 24x24 (120x24). Plays once. Pivot: center.
+Description: Frame 1: only the solid 6x6 diamond. Frame 2: the rays appear at 4-8px. Frame 3: the full fx_hit sprite, with the rays 2px thick and 3-10px out. Frame 4: the rays become 3px dashes at 8-11px. Frame 5: single pixels at the ray ends.
+
+ANIMATION: fx_smoke
+File: Sprites/Fx/smoke.png
+Frames: 6 at 32x32 (192x32). Plays once. Pivot: center.
+Description: Frame 1: a tight cluster of four 5x5 blobs in the center. Frame 2: they spread out 3px. Frame 3: the full fx_smoke sprite. Frame 4: the blobs spread to about 13px out and shrink to 4x4. Frame 5: 3x3 blobs. Frame 6: four single pixels.
+
+ANIMATION: fx_flashbomb
+File: Sprites/Fx/flashbomb.png
+Frames: 7 at 64x64 (448x64). Plays once. Pivot: center.
+Description: Frame 1: the solid 12x12 star. Frame 2: a solid 30px circle. Frame 3: a 52px ring, 6px thick, with 8 rays reaching out to the frame edge. Frame 4: a 60px ring, 3px thick, with the rays broken into dashes. Frame 5: the ring is broken into 12 segments. Frame 6: the segments become dashes. Frame 7: specks.
+
+ANIMATION: fx_aura
+File: Sprites/Fx/aura.png
+Frames: 8 at 32x32 (256x32). Loops seamlessly. Pivot: center.
+Description: The ring and its 8 arcs rotate 5.6 degrees per frame, so 8 frames turn it exactly one arc width. The four 2x2 sparks orbit the ring at the same rate, brightening and dimming by moving 1px in and out.

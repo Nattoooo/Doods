@@ -1,0 +1,66 @@
+BILL 004 - NINJA SPRITES
+
+RULES FOR EVERY SPRITE
+- Same rules as Bills 001-003: PNG, pure white (#FFFFFF) on transparent, no anti-aliasing, no semi-transparent pixels, silhouettes only, 1px transparent gaps between separate parts.
+- Everything faces RIGHT. The game mirrors it for left and rotates it for dashes.
+- Save to the exact path listed. Do not rename.
+
+--------------------------------------------------
+SPRITE: ninja_base
+File: Sprites/Ninja/base.png
+Size: 24x24
+Pivot: bottom center (x=12, y=24). Feet rest on row 23.
+Description: The Ninja, neutral standing pose. It is the char_base stick figure (same 8px wide, 20px tall body and same proportions) with three additions:
+- Headband: a 1px transparent slit across the full width of the head (row 7).
+- Headband tails: two tails stream back from the left end of the slit, 2px thick, 5px and 4px long, with a 1px gap between them. Behind the head, in the neutral pose, they hang slightly down.
+- Scabbard: a 1px thick, 12px long diagonal line behind the torso, running from behind the left hip up to above the right shoulder. It has a 1px gap from the torso. A 2x2 hilt block sits at the upper end.
+
+--------------------------------------------------
+SPRITE: ninja_shuriken
+File: Sprites/Ninja/shuriken.png (the strip is built in Bill 005)
+Size: 8x8
+Pivot: center (x=4, y=4)
+Description: A four-pointed throwing star. Four 3px long, 2px wide points (up, right, down and left) meet around a 2x2 transparent hole in the center. The points are tapered to a single pixel at their tips.
+
+SPRITE: ninja_kunai
+File: Sprites/Ninja/kunai.png
+Size: 12x5
+Pivot: center (x=6, y=2)
+Description: A kunai knife pointing RIGHT. A leaf-shaped blade on the right, 7px long and 3px wide at its widest point, tapering to a point. A 1px gap. A 1px thick, 2px long handle, ending in a 3x3 ring (1px line, hollow center) on the left.
+
+SPRITE: ninja_katana
+File: Sprites/Ninja/katana.png
+Size: 28x7
+Pivot: center (x=14, y=3)
+Description: A katana pointing RIGHT. A 19px long, 2px thick blade on the right, with a 1px upward curve at the tip. A 1px gap. A 2x5 guard (tsuba). A 1px gap. A 6px long, 2px thick grip on the left.
+
+--------------------------------------------------
+SPRITE: fx_slash
+File: Sprites/Fx/slash.png (the strip is built in Bill 005)
+Size: 40x32
+Pivot: left center (x=0, y=16)
+Description: A crescent sword-slash arc in front of the character. A 3px thick curved line sweeping from the top (x=6, y=2) out to the right (x=38, y=16) and back down to the bottom (x=6, y=30). It is thickest in the middle and tapers to a point at both ends.
+
+SPRITE: fx_hit
+File: Sprites/Fx/hit.png
+Size: 24x24
+Pivot: center (x=12, y=12)
+Description: A hit spark. An 8-point starburst: 8 rays at 45 degree steps, 2px thick, with the inner end 3px from the center and the outer end 10px out. A solid 4x4 diamond sits in the center, and the rays are separated from it by a 1px gap.
+
+SPRITE: fx_smoke
+File: Sprites/Fx/smoke.png
+Size: 32x32
+Pivot: center (x=16, y=16)
+Description: A puff of smoke. Five round blobs (one 7x7 in the center and four 5x5 around it at the diagonals, about 7px out), with 1px gaps between them.
+
+SPRITE: fx_flashbomb
+File: Sprites/Fx/flashbomb.png
+Size: 64x64
+Pivot: center (x=32, y=32)
+Description: A flash bomb. A solid 16x16 eight-point star in the center. A 1px gap. A ring, 40px across and 3px thick, broken into 8 segments by 1px gaps.
+
+SPRITE: fx_aura
+File: Sprites/Fx/aura.png
+Size: 32x32
+Pivot: center (x=16, y=16)
+Description: The Instinct aura. A ring 26px across and 1px thick, broken into 8 equal arcs by 2px gaps. Four 2x2 sparks sit just outside it at the top, right, bottom and left.

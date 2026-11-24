@@ -11,6 +11,8 @@ export interface FxInstance {
   y: number;
   flip: boolean;
   tint: number;
+  angle?: number;
+  front: boolean;
   animator: Animator;
 }
 
@@ -35,14 +37,14 @@ export class FxSystem {
   readonly instances: FxInstance[] = [];
   readonly ghosts: GhostInstance[] = [];
 
-  constructor(private world: World) {
+  constructor(world: World) {
     world.events.on((e) => this.handle(e));
   }
 
-  spawn(clip: ClipDef, x: number, y: number, flip: boolean, tint: number): void {
+  spawn(clip: ClipDef, x: number, y: number, flip: boolean, tint: number, front = false, angle?: number): void {
     const animator = new Animator();
     animator.play(clip);
-    this.instances.push({ clip, x, y, flip, tint, animator });
+    this.instances.push({ clip, x, y, flip, tint, angle, front, animator });
   }
 
   step(_world: World): void {
@@ -66,9 +68,8 @@ export class FxSystem {
   }
 
   private spawnTrail(e: SimEventData): void {
-    const fighter = this.world.fighters[e.fighterId];
-    if (!fighter) return;
-    const clip = fighter.clips.run;
+    const clip = e.clip;
+    if (!clip) return;
     this.ghosts.push({
       clip,
       frame: (e.index ?? 0) % clip.frames,
@@ -98,11 +99,24 @@ export class FxSystem {
       case SimEvent.AirJump:
         this.spawn(FX_CLIPS.airPuff, e.x, e.y, false, e.tint);
         break;
+      case SimEvent.WallKick:
+        this.spawn(FX_CLIPS.wallPuff, e.x - e.dir * 4, e.y, e.dir < 0, e.tint);
+        break;
       case SimEvent.DodgeTrail:
         this.spawnTrail(e);
         break;
-      case SimEvent.WallKick:
-        this.spawn(FX_CLIPS.wallPuff, e.x - e.dir * 4, e.y, e.dir < 0, e.tint);
+      case SimEvent.Hit:
+        if (e.kind !== 'dot') this.spawn(FX_CLIPS.hit, e.x, e.y, false, e.tint, true);
+        break;
+      case SimEvent.Slash:
+        this.spawn(FX_CLIPS.slash, e.x, e.y, e.dir < 0, e.tint, true, e.angle ?? 0);
+        break;
+      case SimEvent.FlashBomb:
+        this.spawn(FX_CLIPS.flashBomb, e.x, e.y, false, e.tint, true);
+        break;
+      case SimEvent.Smoke:
+      case SimEvent.Death:
+        this.spawn(FX_CLIPS.smoke, e.x, e.y, false, e.tint, true);
         break;
     }
   }

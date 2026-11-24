@@ -7,7 +7,31 @@ export const Action = {
   Down: 8,
   Jump: 16,
   Dodge: 32,
+  Slot1: 64,
+  Slot2: 128,
+  Slot3: 256,
+  Slot4: 512,
+  Slot5: 1024,
+  Slot6: 2048,
+  Slot7: 4096,
+  Support1: 8192,
+  Support2: 16384,
+  Support3: 32768,
 } as const;
+
+export const SLOT_ACTIONS: readonly number[] = [
+  Action.Slot1,
+  Action.Slot2,
+  Action.Slot3,
+  Action.Slot4,
+  Action.Slot5,
+  Action.Slot6,
+  Action.Slot7,
+];
+
+export const SUPPORT_ACTIONS: readonly number[] = [Action.Support1, Action.Support2, Action.Support3];
+
+export const SUPPORT_MASK = Action.Support1 | Action.Support2 | Action.Support3;
 
 export interface InputState {
   readonly held: number;
@@ -40,9 +64,20 @@ export const DEFAULT_KEY_BINDINGS: Record<string, number> = {
   Space: Action.Jump,
   KeyS: Action.Down,
   ArrowDown: Action.Down,
+  Digit1: Action.Slot1,
+  Digit2: Action.Slot2,
+  Digit3: Action.Slot3,
+  Digit4: Action.Slot4,
+  Digit5: Action.Slot5,
+  Digit6: Action.Slot6,
+  Digit7: Action.Slot7,
+  KeyQ: Action.Support1,
+  KeyE: Action.Support2,
+  KeyF: Action.Support3,
 };
 
 export const DEFAULT_MOUSE_BINDINGS: Record<number, number> = {
+  0: Action.Slot1,
   2: Action.Dodge,
 };
 

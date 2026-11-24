@@ -1,3 +1,5 @@
+import type { ClipDef } from '../content/clips';
+
 export const SimEvent = {
   Jump: 'jump',
   AirJump: 'airJump',
@@ -6,6 +8,11 @@ export const SimEvent = {
   Step: 'step',
   Dodge: 'dodge',
   DodgeTrail: 'dodgeTrail',
+  Hit: 'hit',
+  Slash: 'slash',
+  FlashBomb: 'flashBomb',
+  Smoke: 'smoke',
+  Death: 'death',
 } as const;
 
 export interface SimEventData {
@@ -18,4 +25,7 @@ export interface SimEventData {
   tint: number;
   angle?: number;
   index?: number;
+  clip?: ClipDef;
+  attackerId?: number;
+  kind?: string;
 }

@@ -1,5 +1,4 @@
 import { VIEW_W } from '../config';
-import { CHAR_BASE } from '../content/character';
 import type { AssetStore } from '../render/assets';
 import { Palette } from '../render/ui';
 import type { Ui } from '../render/ui';
@@ -34,7 +33,7 @@ function drawSlot(ui: Ui, assets: AssetStore, fighter: Fighter | undefined, mirr
   }
 
   const cx = boxX + 1 + 12;
-  assets.drawFrame(ui.renderer, CHAR_BASE, 0, cx, TOP + 1 + 24, fighter.color, 1, mirrored);
+  assets.drawFrame(ui.renderer, fighter.portrait, 0, cx, TOP + 1 + 24, fighter.color, 1, mirrored);
 
   if (mirrored) ui.textRight(fighter.name, barX + BAR_W, textY, fighter.color);
   else ui.text(fighter.name, barX, textY, fighter.color);

@@ -33,8 +33,10 @@ function line(
   }
 }
 
-export function stickPainter(fn: PoseFn): PlaceholderPainter {
+export function stickPainter(fn: PoseFn, ox = 0, oy = 0): PlaceholderPainter {
   return (ctx, frame, frames) => {
+    ctx.save();
+    ctx.translate(ox, oy);
     const t = frames > 1 ? frame / frames : 0;
     const p: Pose = { ...REST, ...fn(t) };
     const pivot = { x: 12, y: 15 };
@@ -71,6 +73,7 @@ export function stickPainter(fn: PoseFn): PlaceholderPainter {
         if ((x + 0.5) ** 2 + (y + 0.5) ** 2 <= 9.5) ctx.fillRect(Math.round(hx) + x, Math.round(hy) + y, 1, 1);
       }
     }
+    ctx.restore();
   };
 }
 
@@ -88,6 +91,54 @@ export function burstPainter(count: number, reach: number, vertical = false): Pl
       const y = vertical ? def.pivotY + along : def.pivotY - 2 + out;
       ctx.fillRect(Math.round(x - size / 2), Math.round(y - size / 2), size, size);
     }
+  };
+}
+
+export function ringPainter(radius: number): PlaceholderPainter {
+  return (ctx, frame, frames, def) => {
+    ctx.fillStyle = '#fff';
+    const phase = (frame / frames) * (Math.PI / 4);
+    for (let i = 0; i < 48; i++) {
+      if (i % 6 === 5) continue;
+      const a = phase + (i / 48) * Math.PI * 2;
+      ctx.fillRect(Math.round(def.pivotX + Math.cos(a) * radius), Math.round(def.pivotY + Math.sin(a) * radius), 1, 1);
+    }
+  };
+}
+
+export function arcPainter(reach: number): PlaceholderPainter {
+  return (ctx, frame, frames, def) => {
+    ctx.fillStyle = '#fff';
+    const t = frames > 1 ? frame / (frames - 1) : 0;
+    const size = Math.max(1, Math.round(3 * (1 - t)));
+    for (let i = 0; i <= 24; i++) {
+      const a = -1.1 + (i / 24) * 2.2;
+      const r = reach * Math.min(1, 0.4 + t * 1.2);
+      ctx.fillRect(Math.round(def.pivotX + Math.cos(a) * r), Math.round(def.pivotY + Math.sin(a) * r * 0.9), size, size);
+    }
+  };
+}
+
+export function crossPainter(): PlaceholderPainter {
+  return (ctx, frame, _frames, def) => {
+    ctx.fillStyle = '#fff';
+    const c = def.frameW / 2;
+    if (frame % 2 === 0) {
+      ctx.fillRect(c - 1, 0, 2, def.frameH);
+      ctx.fillRect(0, c - 1, def.frameW, 2);
+    } else {
+      for (let i = 0; i < def.frameW; i++) {
+        ctx.fillRect(i, i, 1, 1);
+        ctx.fillRect(def.frameW - 1 - i, i, 1, 1);
+      }
+    }
+  };
+}
+
+export function linePainter(length: number, thickness: number): PlaceholderPainter {
+  return (ctx, _frame, _frames, def) => {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(Math.round((def.frameW - length) / 2), Math.round((def.frameH - thickness) / 2), length, thickness);
   };
 }
 

@@ -1,5 +1,6 @@
 import '@fontsource/press-start-2p/latin-400.css';
 import './content/character';
+import './content/ninja/clips';
 import './content/fx';
 import { clipRegistry } from './content/clips';
 import { DeviceController } from './core/input';

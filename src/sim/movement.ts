@@ -17,6 +17,7 @@ export interface MovementState {
   jumpBuffer: number;
   kickLock: number;
   facing: number;
+  cutImmune: boolean;
 }
 
 export interface MovementFlags {
@@ -38,6 +39,7 @@ export function createMovementState(tuning: MovementTuning): MovementState {
     jumpBuffer: 0,
     kickLock: 0,
     facing: 1,
+    cutImmune: false,
   };
 }
 
@@ -120,9 +122,10 @@ export function stepMovement(
   state.sliding = state.wallDir !== 0 && !state.grounded && body.vy >= 0 && axis === state.wallDir;
   if (state.sliding) state.facing = -state.wallDir;
 
+  if (state.grounded || body.vy >= 0) state.cutImmune = false;
   let g = tuning.gravity;
   if (body.vy > 0) g *= tuning.fallMul;
-  else if (body.vy < 0 && !isHeld(input, Action.Jump)) g *= tuning.cutMul;
+  else if (body.vy < 0 && !isHeld(input, Action.Jump) && !state.cutImmune) g *= tuning.cutMul;
   body.vy += g * dt;
   body.vy = Math.min(body.vy, state.sliding ? tuning.wallSlideSpeed : tuning.maxFall);
 
