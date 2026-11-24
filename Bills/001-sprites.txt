@@ -1,0 +1,65 @@
+BILL 001 - SPRITES (core: character template, arena, fx)
+
+RULES FOR EVERY SPRITE
+- PNG, pure white (#FFFFFF) pixels on transparent. No other colors, no anti-aliasing, no semi-transparent pixels. The game tints at runtime.
+- Silhouettes only. Separate parts with a 1px transparent gap. No detail inside a silhouette.
+- Everything faces RIGHT. The game mirrors it for left.
+- Pivot is the point the game anchors to the world. It is listed per sprite.
+- Save to the exact path listed. Do not rename.
+- UI needs no sprites (drawn in code).
+
+--------------------------------------------------
+SPRITE: char_base
+File: Sprites/Character/base.png
+Size: 24x24
+Pivot: bottom center (x=12, y=24). Feet rest on row 23.
+Description: The universal stick figure, neutral standing pose, facing right. This is the template every character is built from.
+- Total height 20px (rows 4-23). Rows 0-3 are headroom for raised arms and blurs.
+- Head: filled circle, 6px wide, rows 4-9, centered on x=12 and nudged 1px right.
+- Torso: 2px thick vertical line, 6px long, rows 10-15, touching the head.
+- Arms: 2px thick, about 6px long, shoulders on row 11, hanging relaxed with a slight bend. Leave a 1px gap between each arm and the torso so they read as separate.
+- Legs: 2px thick, 8px long, rows 16-23, joined at the hip, in a narrow inverted-V stance with the feet about 4px apart on row 23.
+- The body mass sits inside an 8px wide box (columns 8-15). This is the 8x20 collision box. Limbs and effects may leave it during motion.
+- It must read instantly as a stick figure. No face, no clothing.
+
+--------------------------------------------------
+SPRITE: arena_wall
+File: Sprites/Arena/wall.png
+Size: 8x8
+Pivot: top-left
+Description: One tile of the arena wall and floor. A 1px solid outer ring (rows and columns 0 and 7), a 1px transparent gap, then a solid 4x4 square in the middle (rows and columns 2-5). Tiled edge to edge it forms a grid of squares, each with a core.
+
+--------------------------------------------------
+SPRITE: arena_bg
+File: Sprites/Arena/bg.png
+Size: 16x16
+Pivot: top-left
+Description: One tile of the arena backdrop. A single 2x2 dot at columns 7-8, rows 7-8. Nothing else. The game draws it very dim, so it makes a sparse dot grid.
+
+--------------------------------------------------
+SPRITE: fx_dust_step
+File: Sprites/Fx/dust_step.png
+Size: 16x16
+Pivot: bottom center (x=8, y=16). The ground line is row 15.
+Description: A small puff of dust resting on the ground. Three separate rounded blobs (2x2, 3x3, 2x2) with 1px gaps between them, sitting on row 15. Used for footsteps, small landings and run starts.
+
+--------------------------------------------------
+SPRITE: fx_dust_land
+File: Sprites/Fx/dust_land.png
+Size: 32x12
+Pivot: bottom center (x=16, y=12). The ground line is row 11.
+Description: A symmetrical ground burst. Four to six rounded blobs (2x2 to 4x4) with 1px gaps, spread out left and right of center along row 11. The blobs near the edges are smaller. Used for hard landings and jump take-offs.
+
+--------------------------------------------------
+SPRITE: fx_air_ring
+File: Sprites/Fx/air_ring.png
+Size: 24x8
+Pivot: center (x=12, y=4)
+Description: A flat ellipse ring seen in perspective, 22x6, 1px line, fully closed. It appears under the feet on a double jump.
+
+--------------------------------------------------
+SPRITE: fx_wall_spark
+File: Sprites/Fx/wall_spark.png
+Size: 16x16
+Pivot: left center (x=0, y=8). The wall is the LEFT edge of the image.
+Description: A three-ray burst from the wall. Three 2px thick, 5px long rays start at the left edge at y=8, pointing up-right, right and down-right. Leave a 1px gap between the rays. Used when a character kicks off a wall.
