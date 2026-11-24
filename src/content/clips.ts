@@ -21,6 +21,7 @@ export interface ClipDef {
   readonly pivotX: number;
   readonly pivotY: number;
   readonly placeholder?: PlaceholderPainter;
+  readonly placeholderOnly: boolean;
 }
 
 export interface ClipOptions {
@@ -29,6 +30,7 @@ export interface ClipOptions {
   events?: Record<number, string>;
   pivot?: readonly [number, number];
   placeholder?: PlaceholderPainter;
+  placeholderOnly?: boolean;
 }
 
 export const clipRegistry = new Map<string, ClipDef>();
@@ -73,6 +75,7 @@ export function defineClip(
     pivotX: options.pivot?.[0] ?? frameW / 2,
     pivotY: options.pivot?.[1] ?? frameH,
     placeholder: options.placeholder,
+    placeholderOnly: options.placeholderOnly ?? false,
   };
   clipRegistry.set(id, def);
   return def;
