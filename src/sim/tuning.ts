@@ -40,7 +40,7 @@ export const DEFAULT_MOVEMENT: MovementTuning = {
   cutMul: 2.6,
   maxFall: 420,
   jumpHeight: 56,
-  airJumpHeight: 34,
+  airJumpHeight: 51,
   airJumps: 2,
   coyote: 0.08,
   jumpBuffer: 0.1,
