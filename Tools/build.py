@@ -4,6 +4,7 @@ from pix import save_strip, preview
 from figure import BASE, render
 import character
 import fx
+import ninja
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Sprites")
 
@@ -35,6 +36,10 @@ def build():
         assert len(frames) == count, (name, len(frames))
         save_strip(frames, out("Fx", f"{name}.png"))
         sheets[name] = frames
+    for name, (make, path) in ninja.NINJA.items():
+        frame = make()
+        save_strip([frame], out(*path.split("/")))
+        sheets[f"ninja_{name}"] = [frame]
     return sheets
 
 
