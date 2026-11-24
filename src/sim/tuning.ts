@@ -35,7 +35,7 @@ export const DEFAULT_MOVEMENT: MovementTuning = {
   airAccel: 1800,
   airDecel: 600,
   turnMul: 1.6,
-  gravity: 1150,
+  gravity: 0,
   fallMul: 0.8,
   cutMul: 2.6,
   maxFall: 420,
