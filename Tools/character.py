@@ -51,7 +51,7 @@ def idle():
     knees = pose(head, legB=[(11, 16), (10, 19), (8, 22)], legF=[(11, 16), (13, 18), (14, 22)])
     half = [b, b, out1, down, head, knees, knees, knees]
     seq = half + half[::-1]
-    return [render(p) for p in seq]
+    return list(seq)
 
 
 def run():
@@ -77,7 +77,7 @@ def run():
         if streak_on[k]:
             f = min(la(h)[-1], lb(h)[-1])
             p["fx"] = [("under", hstreak(f[0] - 5, f[0] - 2, f[1] + 1))]
-        frames.append(render(p))
+        frames.append(p)
     return frames
 
 
@@ -92,7 +92,7 @@ def jump_start():
     f3 = pose(head=(11, 1), torso=[(12, 7), (12, 13)],
               legB=[(12, 14), (10, 20)], legF=[(12, 14), (14, 20)],
               armB=[(9, 9), (7, 5), (6, 2)], armF=[(16, 9), (19, 5), (20, 2)])
-    return [render(p) for p in (f1, f2, f3)]
+    return [f1, f2, f3]
 
 
 RISE = pose(head=(11, 1), torso=[(12, 7), (12, 13)],
@@ -106,7 +106,7 @@ def rise():
     f3 = pose(RISE, head=(11, 2), torso=[(12, 8), (12, 14)],
               legB=[(12, 15), (11, 18), (10, 20)], legF=[(12, 15), (14, 18), (14, 20)],
               armB=[(9, 10), (6, 7), (5, 4)], armF=[(16, 10), (19, 7), (21, 5)])
-    return [render(p) for p in (f1, f2, f3)]
+    return [f1, f2, f3]
 
 
 TUCK_APEX = pose(head=(11, 4), torso=[(12, 10), (11, 14)],
@@ -127,15 +127,15 @@ def apex():
               armB=[(8, 11), (5, 10), (2, 9)], armF=[(17, 11), (20, 10), (22, 9)],
               modes=dict(legF="over"))
     f4 = pose(TUCK_APEX)
-    return [render(p) for p in (f1, f2, f3, f4)]
+    return [f1, f2, f3, f4]
 
 
 def fall():
     frames = []
     for lift in (0, 1, 0, -1):
-        frames.append(render(pose(head=(10, 6), torso=[(11, 12), (11, 17)],
-                                  legB=[(11, 18), (9, 21), (9, 22)], legF=[(11, 18), (13, 21), (14, 22)],
-                                  armB=[(8, 12), (6, 8), (4, 5 - lift)], armF=[(14, 12), (17, 8), (19, 5 - lift)])))
+        frames.append(pose(head=(10, 6), torso=[(11, 12), (11, 17)],
+                           legB=[(11, 18), (9, 21), (9, 22)], legF=[(11, 18), (13, 21), (14, 22)],
+                           armB=[(8, 12), (6, 8), (4, 5 - lift)], armF=[(14, 12), (17, 8), (19, 5 - lift)]))
     return frames
 
 
@@ -153,7 +153,7 @@ def land():
               legB=[(11, 16), (8, 22)], legF=[(11, 16), (14, 22)],
               armB=[(8, 12), (7, 14), (6, 16)], armF=[(14, 12), (15, 14), (16, 16)])
     f5 = pose()
-    return [render(p) for p in (f1, f2, f3, f4, f5)]
+    return [f1, f2, f3, f4, f5]
 
 
 TUCK = pose(head=(9, 6), torso=[(9, 12), (8, 15)], legB=[],
@@ -169,11 +169,11 @@ def double_jump():
         if 1 <= i <= 6:
             h = head0 + th
             p["fx"] = [("under", arc(9.5, h - 70, h - 25)), ("under", arc(9.5, h - 115, h - 82))]
-        frames.append(render(p))
+        frames.append(p)
     end = pose(head=(11, 2), torso=[(12, 8), (12, 14)],
                legB=[(12, 15), (11, 18), (10, 20)], legF=[(12, 15), (14, 18), (14, 20)],
                armB=[(9, 10), (6, 7), (4, 5)], armF=[(16, 10), (19, 7), (21, 6)])
-    frames.append(render(end))
+    frames.append(end)
     return frames
 
 
@@ -192,7 +192,7 @@ def wall_slide():
     shuffle = pose(SLIDE, legF=[(10, 14), (14, 15), (12, 19)], legB=[(10, 14), (8, 16)])
     shuffle_down = shift(shuffle, 0, 1, body)
     shuffle_down["fx"] = [("under", pixels((8, 20), (8, 22)))]
-    return [render(p) for p in (up, down, shuffle, shuffle_down)]
+    return [up, down, shuffle, shuffle_down]
 
 
 def wall_kick():
@@ -211,8 +211,15 @@ def wall_kick():
               armF=[(16, 9), (19, 6), (21, 3)], armB=[(9, 9), (8, 6), (8, 3)])
     f4["fx"] = [("under", dstreak(6, 22, 7, 21)), ("under", dstreak(9, 23, 10, 22))]
     f5 = pose(RISE)
-    return [render(p) for p in (f1, f2, f3, f4, f5)]
+    return [f1, f2, f3, f4, f5]
 
 
-ANIMS = dict(idle=idle, run=run, jump_start=jump_start, rise=rise, apex=apex, fall=fall, land=land,
+POSES = dict(idle=idle, run=run, jump_start=jump_start, rise=rise, apex=apex, fall=fall, land=land,
              double_jump=double_jump, wall_slide=wall_slide, wall_kick=wall_kick)
+
+
+def rendered(make):
+    return lambda: [render(p) for p in make()]
+
+
+ANIMS = {name: rendered(make) for name, make in POSES.items()}

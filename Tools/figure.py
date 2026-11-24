@@ -59,19 +59,26 @@ def rotate(p, deg, c=(12, 13)):
             q = rot((x + 1, y + 1), c, deg)
             pts.append((rnd(q[0] - 1), rnd(q[1] - 1)))
         p[k] = pts
+    p["rot"] = p.get("rot", 0) + deg
     return p
 
 
+def size(p):
+    return p.get("size", (W, H))
+
+
 def hip_protect(p, r=1):
-    m = blank(W, H)
+    w, h = size(p)
+    m = blank(w, h)
     for k in ("legB", "legF"):
         if p.get(k):
             x, y = p[k][0]
-            m |= box(W, H, x - r, y - r, x + 1 + r, y + 1 + r)
+            m |= box(w, h, x - r, y - r, x + 1 + r, y + 1 + r)
     return m
 
 
 def render(p):
+    W, H = size(p)
     modes = dict(legB="merge", legF="merge", armB="under", armF="over")
     modes.update(p.get("modes", {}))
     body = blank(W, H)
