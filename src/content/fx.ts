@@ -16,4 +16,13 @@ export const FX_CLIPS = {
     pivot: [0, 8],
     placeholder: burstPainter(5, 9),
   }),
+  jumpPuff: defineClip('fx_jump_puff', 'Fx/jump_puff.png', 32, 12, 6, {
+    placeholder: burstPainter(6, 13),
+    placeholderOnly: true,
+  }),
+  airPuff: defineClip('fx_air_puff', 'Fx/air_puff.png', 24, 8, 5, {
+    pivot: [12, 4],
+    placeholder: burstPainter(8, 11),
+    placeholderOnly: true,
+  }),
 };

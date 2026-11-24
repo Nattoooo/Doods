@@ -1,4 +1,4 @@
-BILL 001 - SPRITES (core: character template, arena, fx)
+BILL 001 - SPRITES (core: character template, fx)
 
 RULES FOR EVERY SPRITE
 - PNG, pure white (#FFFFFF) pixels on transparent. No other colors, no anti-aliasing, no semi-transparent pixels. The game tints at runtime.
@@ -6,7 +6,7 @@ RULES FOR EVERY SPRITE
 - Everything faces RIGHT. The game mirrors it for left.
 - Pivot is the point the game anchors to the world. It is listed per sprite.
 - Save to the exact path listed. Do not rename.
-- UI needs no sprites (drawn in code).
+- UI and the arena need no sprites (drawn in code).
 
 --------------------------------------------------
 SPRITE: char_base
@@ -21,20 +21,6 @@ Description: The universal stick figure, neutral standing pose, facing right. Th
 - Legs: 2px thick, 8px long, rows 16-23, joined at the hip, in a narrow inverted-V stance with the feet about 4px apart on row 23.
 - The body mass sits inside an 8px wide box (columns 8-15). This is the 8x20 collision box. Limbs and effects may leave it during motion.
 - It must read instantly as a stick figure. No face, no clothing.
-
---------------------------------------------------
-SPRITE: arena_wall
-File: Sprites/Arena/wall.png
-Size: 8x8
-Pivot: top-left
-Description: One tile of the arena wall and floor. A 1px solid outer ring (rows and columns 0 and 7), a 1px transparent gap, then a solid 4x4 square in the middle (rows and columns 2-5). Tiled edge to edge it forms a grid of squares, each with a core.
-
---------------------------------------------------
-SPRITE: arena_bg
-File: Sprites/Arena/bg.png
-Size: 16x16
-Pivot: top-left
-Description: One tile of the arena backdrop. A single 2x2 dot at columns 7-8, rows 7-8. Nothing else. The game draws it very dim, so it makes a sparse dot grid.
 
 --------------------------------------------------
 SPRITE: fx_dust_step

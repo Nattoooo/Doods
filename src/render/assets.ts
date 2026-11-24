@@ -57,7 +57,7 @@ export class AssetStore {
   }
 
   private async add(renderer: Renderer, def: ClipDef): Promise<void> {
-    const url = urls[`/Sprites/${def.file}`];
+    const url = def.placeholderOnly ? undefined : urls[`/Sprites/${def.file}`];
     if (url) {
       const img = await loadImage(url);
       const frames = Math.max(1, Math.floor(img.width / def.frameW));
@@ -70,7 +70,7 @@ export class AssetStore {
       this.sheets.set(def.id, { def, tex: renderer.createTexture(img), frames, real: true });
       return;
     }
-    this.placeholders.push(def.file);
+    if (!def.placeholderOnly) this.placeholders.push(def.file);
     this.sheets.set(def.id, {
       def,
       tex: renderer.createTexture(paintPlaceholder(def)),

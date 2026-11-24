@@ -45,14 +45,14 @@ export class FxSystem {
         this.spawn(FX_CLIPS.stepDust, e.x - e.dir * 3, e.y, e.dir < 0, e.tint);
         break;
       case SimEvent.Jump:
-        this.spawn(FX_CLIPS.landDust, e.x, e.y, false, e.tint);
+        this.spawn(FX_CLIPS.jumpPuff, e.x, e.y, false, e.tint);
         break;
       case SimEvent.Land:
         if (e.power >= HARD_LANDING_SPEED) this.spawn(FX_CLIPS.landDust, e.x, e.y, false, e.tint);
         else this.spawn(FX_CLIPS.stepDust, e.x, e.y, e.dir < 0, e.tint);
         break;
       case SimEvent.AirJump:
-        this.spawn(FX_CLIPS.airRing, e.x, e.y, false, e.tint);
+        this.spawn(FX_CLIPS.airPuff, e.x, e.y, false, e.tint);
         break;
       case SimEvent.WallKick:
         this.spawn(FX_CLIPS.wallSpark, e.x - e.dir * 4, e.y, e.dir < 0, e.tint);
