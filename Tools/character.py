@@ -62,8 +62,8 @@ def run():
         (lambda h: [h, (11, 18), (10, 22)], lambda h: [h, (14, 17), (15, 20)]),
         (lambda h: [h, (10, 19), (8, 22)], lambda h: [h, (14, 18), (16, 20)]),
     ]
-    back = lambda d: [(10, 11 + d), (8, 13 + d), (6, 12 + d)]
-    fwd = lambda d: [(16, 12 + d), (18, 14 + d), (20, 13 + d)]
+    back = lambda d: [(10, 11 + d), (8, 13 + d), (6, 14 + d)]
+    fwd = lambda d: [(16, 12 + d), (18, 14 + d), (20, 15 + d)]
     mid_f = lambda d: [(16, 11 + d), (16, 13 + d), (17, 15 + d)]
     mid_b = lambda d: [(10, 11 + d), (8, 14 + d)]
     arms = [(back, fwd), (mid_b, mid_f), (mid_f, mid_b), (fwd, back)]
@@ -93,22 +93,19 @@ def jump_start():
               legB=[(12, 15), (11, 19), (11, 22)], legF=[(12, 15), (13, 19), (14, 22)],
               armB=[], armF=[(16, 9), (19, 10), (21, 10)])
     f3 = pose(head=(11, 1), torso=[(12, 7), (12, 13)],
-              legB=[(12, 14), (10, 19)], legF=[(12, 14), (14, 19)],
+              legB=[(12, 14), (10, 20)], legF=[(12, 14), (14, 20)],
               armB=[(9, 9), (7, 5), (6, 2)], armF=[(16, 9), (19, 5), (20, 2)])
-    f3["fx"] = [("under", vstreak(11, 22, 23)), ("under", vstreak(14, 22, 23))]
     return [render(p) for p in (f1, f2, f3)]
 
 
 RISE = pose(head=(11, 1), torso=[(12, 7), (12, 13)],
-            legB=[(12, 14), (10, 19)], legF=[(12, 14), (14, 19)],
+            legB=[(12, 14), (10, 20)], legF=[(12, 14), (14, 20)],
             armB=[(9, 9), (7, 5), (7, 2)], armF=[(16, 9), (19, 5), (21, 2)])
 
 
 def rise():
     f1 = pose(RISE)
-    f1["fx"] = [("under", vstreak(11, 22, 23)), ("under", vstreak(14, 22, 23))]
     f2 = pose(RISE, armB=[(9, 9), (7, 5), (6, 3)], armF=[(16, 9), (19, 6), (21, 3)])
-    f2["fx"] = [("under", vstreak(11, 22, 22)), ("under", vstreak(14, 22, 22))]
     f3 = pose(RISE, head=(11, 2), torso=[(12, 8), (12, 14)],
               legB=[(12, 15), (11, 18), (10, 20)], legF=[(12, 15), (14, 18), (14, 20)],
               armB=[(9, 10), (6, 7), (5, 4)], armF=[(16, 10), (19, 7), (21, 5)])
@@ -138,16 +135,10 @@ def apex():
 
 def fall():
     frames = []
-    for k in range(4):
-        p = pose(head=(10, 6), torso=[(11, 12), (11, 17)],
-                 legB=[(11, 18), (9, 21), (9, 22)], legF=[(11, 18), (13, 21), (14, 22)],
-                 armB=[(8, 12), (6, 8), (4, 5)], armF=[(14, 12), (17, 8), (19, 5)])
-        fx = []
-        for col, ph in ((11, 0), (14, 2)):
-            pts = [(col, y) for y in range(0, 5) if (y + k + ph) % 4 < 3]
-            fx.append(("under", pixels(*pts)))
-        p["fx"] = fx
-        frames.append(render(p))
+    for lift in (0, 1, 0, -1):
+        frames.append(render(pose(head=(10, 6), torso=[(11, 12), (11, 17)],
+                                  legB=[(11, 18), (9, 21), (9, 22)], legF=[(11, 18), (13, 21), (14, 22)],
+                                  armB=[(8, 12), (6, 8), (4, 5 - lift)], armF=[(14, 12), (17, 8), (19, 5 - lift)])))
     return frames
 
 
@@ -223,7 +214,6 @@ def wall_kick():
               armF=[(16, 9), (19, 6), (21, 3)], armB=[(9, 9), (8, 6), (8, 3)])
     f4["fx"] = [("under", dstreak(6, 22, 7, 21)), ("under", dstreak(9, 23, 10, 22))]
     f5 = pose(RISE)
-    f5["fx"] = [("under", vstreak(11, 22, 23)), ("under", vstreak(14, 22, 23))]
     return [render(p) for p in (f1, f2, f3, f4, f5)]
 
 
