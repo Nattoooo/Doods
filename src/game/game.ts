@@ -15,7 +15,7 @@ import { drawHud } from './hud';
 const PLAYER_COLOR = 0x5ad1ff;
 const BORDER = 3;
 const GRID = 16;
-const HINT = 'A/D MOVE  W/SPACE JUMP  R RESET  F3 DEBUG';
+const HINT = 'A/D MOVE  W/SPACE JUMP  M2 TELEPORT  R RESET';
 
 export class Game {
   readonly world: World;
@@ -74,6 +74,7 @@ export class Game {
     this.drawFighters();
     drawHud(this.ui, this.assets, this.world.fighters[0], this.world.fighters[1]);
     this.ui.textCenter(HINT, VIEW_W / 2, 44, Palette.dim);
+    this.drawCrosshair();
     if (this.debug) this.drawDebug();
     r.end();
   }
@@ -118,6 +119,20 @@ export class Game {
     for (const fx of this.fx.instances) {
       this.assets.drawFrame(this.renderer, fx.clip, fx.animator.frame, fx.x, fx.y, fx.tint, 1, fx.flip);
     }
+    for (const g of this.fx.ghosts) {
+      this.assets.drawFrame(this.renderer, g.clip, g.frame, g.x, g.y, g.tint, g.alpha, g.flip);
+    }
+  }
+
+  private drawCrosshair(): void {
+    const r = this.renderer;
+    const x = Math.round(this.player.aimX);
+    const y = Math.round(this.player.aimY);
+    const c = this.player.color;
+    r.rect(x - 4, y, 3, 1, c);
+    r.rect(x + 2, y, 3, 1, c);
+    r.rect(x, y - 4, 1, 3, c);
+    r.rect(x, y + 2, 1, 3, c);
   }
 
   private drawFighters(): void {

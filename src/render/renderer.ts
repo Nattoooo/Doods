@@ -160,6 +160,13 @@ export class Renderer {
     this.viewport = { x: Math.floor((cw - w) / 2), y: Math.floor((ch - h) / 2), w, h };
   }
 
+  screenToView(clientX: number, clientY: number): [number, number] {
+    const kx = this.canvas.width / Math.max(1, window.innerWidth);
+    const ky = this.canvas.height / Math.max(1, window.innerHeight);
+    const v = this.viewport;
+    return [(clientX * kx - v.x) / this.scale, (clientY * ky - v.y) / this.scale];
+  }
+
   begin(): void {
     const gl = this.gl;
     const v = this.viewport;

@@ -1,0 +1,46 @@
+BILL 003 - TELEPORT VFX
+
+RULES FOR EVERY SPRITE AND ANIMATION
+- Same rules as Bills 001 and 002: PNG, pure white (#FFFFFF) on transparent, no anti-aliasing, no semi-transparent pixels, silhouettes only, 1px transparent gaps between separate parts.
+- Each animation is ONE horizontal strip of equal frames, left to right, no padding. The frame counts are exact because the game reads them.
+- 24 FPS, one tick (1/24 s) per frame.
+- Both effects are drawn centered on the character's body center. The pivot of both is the exact center of the frame, (x=16, y=16).
+- They are symmetric and have no facing. The game does not mirror them.
+- The trail between the two points is drawn in code from the character's own frames, so it needs no art.
+
+--------------------------------------------------
+SPRITE: fx_tele_out
+File: Sprites/Fx/tele_out.png
+Size: 32x32
+Pivot: center (x=16, y=16)
+Description: The vanish burst, shown where the character disappears. A ring 28px across and 2px thick, broken into 8 arc segments with 1px gaps between them. A solid 4x4 square sits in the center, with a 1px gap between it and the ring's inner edge.
+
+ANIMATION: fx_tele_out
+File: Sprites/Fx/tele_out.png
+Frames: 6 at 32x32 (192x32). Plays once.
+Description: Everything collapses inward, fast.
+- Frame 1: the full ring (28px across, 2px thick) and the center square.
+- Frame 2: the ring contracts to 22px. Four 3px dashes appear just outside it on the diagonals, pointing at the center, with 1px gaps.
+- Frame 3: the ring is 16px across and 1px thick. The dashes are 3px long and closer in.
+- Frame 4: the ring is 10px across. The segments are separated by wider gaps (2-3px).
+- Frame 5: only the center square remains, shrunk to 4x4 and then 2x2.
+- Frame 6: four single pixels in a plus shape around the center at 3px out, then gone.
+
+--------------------------------------------------
+SPRITE: fx_tele_in
+File: Sprites/Fx/tele_in.png
+Size: 32x32
+Pivot: center (x=16, y=16)
+Description: The arrival burst, shown where the character appears. 8 rays at 45 degree steps, each 2px thick and 6px long, with the inner end 6px from the center and the outer end 12px out. A solid 4x4 square sits in the center. The rays are separated from each other by transparent gaps.
+
+ANIMATION: fx_tele_in
+File: Sprites/Fx/tele_in.png
+Frames: 7 at 32x32 (224x32). Plays once.
+Description: An arrival flash that blows outward.
+- Frame 1: a solid 10x10 flash, diamond-shaped, with no rays.
+- Frame 2: the flash shrinks to a 14px ring (2px thick). The 8 rays start at 4-7px from the center, 3px long.
+- Frame 3: the rays extend to 7-14px from the center and are 2px thick.
+- Frame 4: the rays move out to 10-15px and the ring grows to 24px, thinning to 1px.
+- Frame 5: the rays detach into 3px dashes at 12-15px. The ring is broken into segments with 1px gaps.
+- Frame 6: the dashes shrink to 2px.
+- Frame 7: single pixels at the ray ends, then gone.

@@ -1,5 +1,5 @@
 import { defineClip } from './clips';
-import { burstPainter } from '../render/placeholder';
+import { burstPainter, ringPainter } from '../render/placeholder';
 
 export const FX_CLIPS = {
   stepDust: defineClip('fx_dust_step', 'Fx/dust_step.png', 16, 16, 5, {
@@ -29,5 +29,13 @@ export const FX_CLIPS = {
     pivot: [0, 16],
     placeholder: burstPainter(6, 13, true),
     placeholderOnly: true,
+  }),
+  teleOut: defineClip('fx_tele_out', 'Fx/tele_out.png', 32, 32, 6, {
+    pivot: [16, 16],
+    placeholder: ringPainter(true, false),
+  }),
+  teleIn: defineClip('fx_tele_in', 'Fx/tele_in.png', 32, 32, 7, {
+    pivot: [16, 16],
+    placeholder: ringPainter(false, true),
   }),
 };

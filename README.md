@@ -14,4 +14,4 @@ npm run build
 - `Sprites/` art, loaded by path. Missing sprites fall back to generated placeholders.
 - `Bills/` sprite and animation bills for the art agent.
 - Physics run at 240 Hz, rendering at 60 FPS, animations at 24 FPS.
-- Controls: A/D or arrows move, W/Up/Space jump, R reset, F3 debug.
+- Controls: A/D or arrows move, W/Up/Space jump, M2 teleport toward the cursor, R reset, F3 debug.

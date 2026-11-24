@@ -1,11 +1,14 @@
 import type { FighterClips } from '../content/character';
 import type { Controller } from '../core/controller';
+import { SIM_DT } from '../config';
+import { Action, isPressed } from '../core/input';
 import { Animator } from './animator';
 import { createBody } from './body';
 import type { Body } from './body';
 import { SimEvent } from './events';
 import { createMovementFlags, createMovementState, senseContacts, stepMovement } from './movement';
 import type { MovementFlags, MovementState } from './movement';
+import { planTeleport } from './teleport';
 import { DEFAULT_MOVEMENT } from './tuning';
 import type { MovementTuning } from './tuning';
 import type { World } from './world';
@@ -36,6 +39,9 @@ export class Fighter {
   tint: number;
   health: number;
   maxHealth: number;
+  teleportCooldown = 0;
+  aimX = 0;
+  aimY = 0;
 
   private spawnX: number;
   private spawnY: number;
@@ -73,16 +79,53 @@ export class Fighter {
     this.move.kickLock = 0;
     this.move.jumpBuffer = 0;
     this.move.facing = 1;
+    this.teleportCooldown = 0;
     this.animator.play(this.clips.idle, true);
     if (this.world) senseContacts(this.world.arena, this.body, this.move, this.tuning);
   }
 
   step(world: World): void {
     const input = this.controller.read(this, world);
+    this.aimX = input.aimX;
+    this.aimY = input.aimY;
+    this.teleportCooldown = Math.max(0, this.teleportCooldown - SIM_DT);
+    if (isPressed(input, Action.Teleport) && this.teleportCooldown === 0) this.tryTeleport(world);
     stepMovement(world.arena, this.body, this.move, this.tuning, input, this.flags);
     this.emitMovementEvents(world);
     this.driveAnimation();
     this.animator.step();
+  }
+
+  get teleportReady(): number {
+    return 1 - this.teleportCooldown / this.tuning.teleportCooldown;
+  }
+
+  private tryTeleport(world: World): void {
+    const b = this.body;
+    const plan = planTeleport(world.arena, b, this.aimX, this.aimY, this.move.facing, this.tuning);
+    if (!plan) return;
+    const fromX = b.x;
+    const fromY = b.y - b.h / 2;
+    b.x = plan.x;
+    b.y = plan.y;
+    if (!this.tuning.teleportKeepsVelocity) {
+      b.vx = 0;
+      b.vy = 0;
+    }
+    if (Math.abs(plan.dirX) > 0.2) this.move.facing = plan.dirX > 0 ? 1 : -1;
+    this.teleportCooldown = this.tuning.teleportCooldown;
+    senseContacts(world.arena, b, this.move, this.tuning);
+    world.emit({
+      type: SimEvent.Teleport,
+      fighterId: this.id,
+      x: fromX,
+      y: fromY,
+      dir: this.move.facing,
+      power: plan.distance,
+      tint: this.tint,
+      toX: b.x,
+      toY: b.y - b.h / 2,
+    });
   }
 
   private emitMovementEvents(world: World): void {

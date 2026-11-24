@@ -1,17 +1,22 @@
+import { VIEW_H, VIEW_W } from '../config';
+
 export const Action = {
   Left: 1,
   Right: 2,
   Up: 4,
   Down: 8,
   Jump: 16,
+  Teleport: 32,
 } as const;
 
 export interface InputState {
   readonly held: number;
   readonly pressed: number;
+  readonly aimX: number;
+  readonly aimY: number;
 }
 
-export const NO_INPUT: InputState = { held: 0, pressed: 0 };
+export const NO_INPUT: InputState = { held: 0, pressed: 0, aimX: 0, aimY: 0 };
 
 export function axisX(input: InputState): number {
   return ((input.held & Action.Right) !== 0 ? 1 : 0) - ((input.held & Action.Left) !== 0 ? 1 : 0);
@@ -37,12 +42,19 @@ export const DEFAULT_KEY_BINDINGS: Record<string, number> = {
   ArrowDown: Action.Down,
 };
 
+export const DEFAULT_MOUSE_BINDINGS: Record<number, number> = {
+  2: Action.Teleport,
+};
+
 const PAD_DEADZONE = 0.35;
 
 export class DeviceController {
   private keys = new Set<string>();
   private latch = 0;
   private padHeld = 0;
+  private mouseHeld = 0;
+  private aimX = VIEW_W / 2;
+  private aimY = VIEW_H / 2;
 
   constructor(
     target: Window,
@@ -64,6 +76,35 @@ export class DeviceController {
     target.addEventListener('blur', () => {
       this.keys.clear();
       this.latch = 0;
+    });
+  }
+
+  attachPointer(
+    canvas: HTMLCanvasElement,
+    toView: (clientX: number, clientY: number) => readonly [number, number],
+    bindings: Record<number, number> = DEFAULT_MOUSE_BINDINGS,
+  ): void {
+    const aim = (e: MouseEvent) => {
+      const [x, y] = toView(e.clientX, e.clientY);
+      this.aimX = x;
+      this.aimY = y;
+    };
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    canvas.addEventListener('mousemove', aim);
+    canvas.addEventListener('mousedown', (e) => {
+      aim(e);
+      const bound = bindings[e.button];
+      if (bound === undefined) return;
+      e.preventDefault();
+      this.mouseHeld |= bound;
+      this.latch |= bound;
+    });
+    window.addEventListener('mouseup', (e) => {
+      const bound = bindings[e.button];
+      if (bound !== undefined) this.mouseHeld &= ~bound;
+    });
+    window.addEventListener('blur', () => {
+      this.mouseHeld = 0;
     });
   }
 
@@ -90,9 +131,9 @@ export class DeviceController {
     const pad = this.pollPad();
     const padPressed = pad & ~this.padHeld;
     this.padHeld = pad;
-    held |= pad;
+    held |= pad | this.mouseHeld;
     const pressed = this.latch | padPressed;
     this.latch = 0;
-    return { held, pressed };
+    return { held, pressed, aimX: this.aimX, aimY: this.aimY };
   }
 }

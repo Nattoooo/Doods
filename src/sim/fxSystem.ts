@@ -14,12 +14,27 @@ export interface FxInstance {
   animator: Animator;
 }
 
+export interface GhostInstance {
+  clip: ClipDef;
+  frame: number;
+  x: number;
+  y: number;
+  flip: boolean;
+  tint: number;
+  age: number;
+  life: number;
+  alpha: number;
+}
+
 const HARD_LANDING_SPEED = 220;
+const GHOST_SPACING = 7;
+const GHOST_ALPHA = 0.55;
 
 export class FxSystem {
   readonly instances: FxInstance[] = [];
+  readonly ghosts: GhostInstance[] = [];
 
-  constructor(world: World) {
+  constructor(private world: World) {
     world.events.on((e) => this.handle(e));
   }
 
@@ -37,6 +52,38 @@ export class FxSystem {
       if (!fx.animator.finished) this.instances[w++] = fx;
     }
     this.instances.length = w;
+
+    let g = 0;
+    for (let i = 0; i < this.ghosts.length; i++) {
+      const ghost = this.ghosts[i];
+      ghost.age++;
+      if (ghost.age >= ghost.life) continue;
+      ghost.alpha = GHOST_ALPHA * (1 - ghost.age / ghost.life);
+      this.ghosts[g++] = ghost;
+    }
+    this.ghosts.length = g;
+  }
+
+  private spawnGhosts(e: SimEventData): void {
+    const fighter = this.world.fighters[e.fighterId];
+    const clip = fighter?.animator.clip;
+    if (!fighter || !clip || e.toX === undefined || e.toY === undefined) return;
+    const half = fighter.body.h / 2;
+    const count = Math.max(1, Math.floor(e.power / GHOST_SPACING));
+    for (let i = 0; i < count; i++) {
+      const t = i / count;
+      this.ghosts.push({
+        clip,
+        frame: fighter.animator.frame,
+        x: e.x + (e.toX - e.x) * t,
+        y: e.y + (e.toY - e.y) * t + half,
+        flip: e.dir < 0,
+        tint: e.tint,
+        age: 0,
+        life: 14 + Math.round(26 * t),
+        alpha: GHOST_ALPHA,
+      });
+    }
   }
 
   private handle(e: SimEventData): void {
@@ -53,6 +100,11 @@ export class FxSystem {
         break;
       case SimEvent.AirJump:
         this.spawn(FX_CLIPS.airPuff, e.x, e.y, false, e.tint);
+        break;
+      case SimEvent.Teleport:
+        this.spawn(FX_CLIPS.teleOut, e.x, e.y, false, e.tint);
+        if (e.toX !== undefined && e.toY !== undefined) this.spawn(FX_CLIPS.teleIn, e.toX, e.toY, false, e.tint);
+        this.spawnGhosts(e);
         break;
       case SimEvent.WallKick:
         this.spawn(FX_CLIPS.wallPuff, e.x - e.dir * 4, e.y, e.dir < 0, e.tint);

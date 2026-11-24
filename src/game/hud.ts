@@ -39,4 +39,9 @@ function drawSlot(ui: Ui, assets: AssetStore, fighter: Fighter | undefined, mirr
   if (mirrored) ui.textRight(fighter.name, barX + BAR_W, textY, fighter.color);
   else ui.text(fighter.name, barX, textY, fighter.color);
   ui.bar(barX, barY, BAR_W, BAR_H, fighter.health / fighter.maxHealth, fighter.color, fighter.color);
+
+  const ready = fighter.teleportReady;
+  const stripY = TOP + PORTRAIT + 1;
+  ui.renderer.rect(barX, stripY, BAR_W, 2, Palette.panel);
+  ui.renderer.rect(barX, stripY, Math.round(BAR_W * ready), 2, ready >= 1 ? fighter.color : Palette.dim);
 }

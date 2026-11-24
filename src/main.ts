@@ -26,6 +26,7 @@ async function boot(): Promise<void> {
   ]);
   const ui = new Ui(renderer, font);
   const device = new DeviceController(window);
+  device.attachPointer(canvas, (x, y) => renderer.screenToView(x, y));
   const game = new Game(renderer, assets, ui, device);
   game.stats = startLoop({
     step: () => game.step(),
