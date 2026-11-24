@@ -8,7 +8,7 @@ export const Palette = {
   text: 0xe6e9f0,
   dim: 0x5c6475,
   arena: 0x9aa3b2,
-  arenaBg: 0x1c212c,
+  arenaGrid: 0x1c212c,
   danger: 0xff5a5a,
   debug: 0x6dff9a,
 } as const;

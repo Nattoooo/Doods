@@ -1,5 +1,4 @@
-import { ARENA_COLS, ARENA_ROWS, HUD_HEIGHT, VIEW_H, VIEW_W } from '../config';
-import { ARENA_SPRITES } from '../content/arena';
+import { ARENA_COLS, ARENA_ROWS, HUD_HEIGHT, TILE, VIEW_H, VIEW_W } from '../config';
 import { CHAR_CLIPS } from '../content/character';
 import type { Controller } from '../core/controller';
 import type { LoopStats } from '../core/loop';
@@ -14,6 +13,8 @@ import { World } from '../sim/world';
 import { drawHud } from './hud';
 
 const PLAYER_COLOR = 0x5ad1ff;
+const BORDER = 3;
+const GRID = 16;
 const HINT = 'A/D MOVE  W/SPACE JUMP  R RESET  F3 DEBUG';
 
 export class Game {
@@ -88,25 +89,27 @@ export class Game {
   }
 
   private drawArena(): void {
+    const r = this.renderer;
     const arena = this.world.arena;
-    const bg = ARENA_SPRITES.bg;
-    for (let y = arena.tileY(1); y < arena.floorY; y += bg.frameH) {
-      for (let x = arena.innerLeft; x < arena.innerRight; x += bg.frameW) {
-        this.assets.drawFrame(this.renderer, bg, 0, x + bg.pivotX, y + bg.pivotY, Palette.arenaBg);
-      }
-    }
-    const wall = ARENA_SPRITES.wall;
-    for (let row = 0; row < arena.rows; row++) {
-      for (let col = 0; col < arena.cols; col++) {
-        if (!arena.isSolid(col, row)) continue;
-        this.assets.drawFrame(
-          this.renderer,
-          wall,
-          0,
-          arena.tileX(col) + wall.pivotX,
-          arena.tileY(row) + wall.pivotY,
-          Palette.arena,
-        );
+    const left = arena.innerLeft;
+    const right = arena.innerRight;
+    const top = arena.tileY(1);
+    const bottom = arena.floorY;
+    const w = right - left;
+    const h = bottom - top;
+
+    for (let x = left + GRID; x < right; x += GRID) r.rect(x, top, 1, h, Palette.arenaGrid);
+    for (let y = top + GRID; y < bottom; y += GRID) r.rect(left, y, w, 1, Palette.arenaGrid);
+
+    const t = BORDER;
+    r.rect(left - t, top - t, w + t * 2, t, Palette.arena);
+    r.rect(left - t, bottom, w + t * 2, t, Palette.arena);
+    r.rect(left - t, top, t, h, Palette.arena);
+    r.rect(right, top, t, h, Palette.arena);
+
+    for (let row = 1; row < arena.rows - 1; row++) {
+      for (let col = 1; col < arena.cols - 1; col++) {
+        if (arena.isSolid(col, row)) r.rect(arena.tileX(col), arena.tileY(row), TILE, TILE, Palette.arena);
       }
     }
   }
