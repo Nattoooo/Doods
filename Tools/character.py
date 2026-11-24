@@ -62,16 +62,8 @@ def run():
         (lambda h: [h, (11, 18), (10, 22)], lambda h: [h, (14, 17), (15, 20)]),
         (lambda h: [h, (10, 19), (8, 22)], lambda h: [h, (14, 18), (16, 20)]),
     ]
-    arm = [
-        [(9, 11), (6, 11), (3, 10)],
-        [(9, 12), (7, 14), (5, 16)],
-        [(9, 12), (8, 15), (8, 18)],
-        [(16, 12), (18, 14), (20, 16)],
-        [(16, 11), (19, 11), (22, 10)],
-        [(16, 12), (18, 14), (20, 16)],
-        [(9, 12), (8, 15), (8, 18)],
-        [(9, 12), (7, 14), (5, 16)],
-    ]
+    arm_hi = [(12, 11), (8, 11), (4, 11)]
+    arm_lo = [(11, 14), (7, 14), (3, 14)]
     streak_on = [False, True, True, False]
     frames = []
     for i in range(8):
@@ -80,8 +72,8 @@ def run():
         h = (11, 16 + dy)
         la, lb = legs[k]
         lift = lambda pts: [(x, y + dy) for x, y in pts]
-        p = pose(head=(12, 4 + dy), torso=[(13, 10 + dy), (11, 15 + dy)], legF=la(h), legB=lb(h),
-                 armF=lift(arm[i]), armB=[], modes=dict(armF="under"))
+        p = pose(head=(14, 6 + dy), torso=lift([(15, 11), (11, 15)]), legF=la(h), legB=lb(h),
+                 armF=lift(arm_hi), armB=lift(arm_lo), modes=dict(armF="under", armB="under"))
         if streak_on[k]:
             f = min(la(h)[-1], lb(h)[-1])
             p["fx"] = [("under", hstreak(f[0] - 5, f[0] - 2, f[1] + 1))]
