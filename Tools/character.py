@@ -62,25 +62,41 @@ def run():
         (lambda h: [h, (11, 18), (10, 22)], lambda h: [h, (14, 17), (15, 20)]),
         (lambda h: [h, (10, 19), (8, 22)], lambda h: [h, (14, 18), (16, 20)]),
     ]
-    back = lambda d: [(10, 11 + d), (8, 13 + d), (6, 14 + d)]
-    fwd = lambda d: [(16, 12 + d), (18, 14 + d), (20, 15 + d)]
-    mid_f = lambda d: [(16, 11 + d), (16, 13 + d), (17, 15 + d)]
-    mid_b = lambda d: [(10, 11 + d), (8, 14 + d)]
-    arms = [(back, fwd), (mid_b, mid_f), (mid_f, mid_b), (fwd, back)]
+    near_arm = [
+        [(9, 12), (7, 14), (4, 15)],
+        [(9, 12), (8, 15), (6, 17)],
+        [(15, 12), (15, 15), (16, 17)],
+        [(16, 12), (17, 15), (19, 16)],
+        [(16, 11), (18, 13), (21, 13)],
+        [(16, 12), (17, 15), (19, 16)],
+        [(15, 12), (15, 15), (16, 17)],
+        [(9, 12), (8, 15), (6, 17)],
+    ]
+    far_arm = [
+        [(16, 12), (18, 13)],
+        [(16, 12), (17, 14)],
+        [],
+        [(9, 12), (8, 14)],
+        [(9, 12), (7, 13)],
+        [(9, 12), (8, 14)],
+        [],
+        [(16, 12), (17, 14)],
+    ]
     streak_on = [False, True, True, False]
     frames = []
-    for side in (0, 1):
-        for i in range(4):
-            dy = dys[i]
-            h = (11, 16 + dy)
-            la, lb = legs[i]
-            near, far = arms[i] if side == 0 else arms[i][::-1]
-            p = pose(head=(12, 4 + dy), torso=[(13, 10 + dy), (11, 15 + dy)], legF=la(h), legB=lb(h),
-                     armF=near(dy), armB=far(dy), modes=dict(armF="under", armB="under"))
-            if streak_on[i]:
-                f = min(la(h)[-1], lb(h)[-1])
-                p["fx"] = [("under", hstreak(f[0] - 5, f[0] - 2, f[1] + 1))]
-            frames.append(render(p))
+    for i in range(8):
+        k = i % 4
+        dy = dys[k]
+        h = (11, 16 + dy)
+        la, lb = legs[k]
+        lift = lambda pts: [(x, y + dy) for x, y in pts]
+        p = pose(head=(12, 4 + dy), torso=[(13, 10 + dy), (11, 15 + dy)], legF=la(h), legB=lb(h),
+                 armF=lift(near_arm[i]), armB=lift(far_arm[i]), modes=dict(armF="under", armB="under"),
+                 order=["legB", "legF", "armF", "armB"])
+        if streak_on[k]:
+            f = min(la(h)[-1], lb(h)[-1])
+            p["fx"] = [("under", hstreak(f[0] - 5, f[0] - 2, f[1] + 1))]
+        frames.append(render(p))
     return frames
 
 
